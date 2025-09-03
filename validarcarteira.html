@@ -1,202 +1,565 @@
 <!DOCTYPE html>
-<!-- Declaração do tipo de documento HTML5 -->
 <html lang="pt-BR">
-<!-- Elemento raiz HTML com idioma definido como português brasileiro -->
-
 <head>
-    <!-- Seção de metadados do documento -->
     <meta charset="UTF-8">
-    <!-- Define codificação de caracteres como UTF-8 para suportar acentos -->
-    
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Configuração para dispositivos móveis - torna a página responsiva -->
-    
-    <title>Validador de Carteiras e Transações</title>
-    <!-- Título que aparece na aba do navegador -->
+    <title>Validador de Carteiras Blockchain</title>
     
     <style>
-        /* CSS interno - estilos para formatação da página */
-        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            /* Estilos para o corpo da página */
-            font-family: Arial, sans-serif;     /* Define fonte padrão */
-            max-width: 600px;                   /* Largura máxima de 600px */
-            margin: 40px auto;                  /* Margem de 40px em cima/baixo e centraliza horizontalmente */
-            padding: 20px;                      /* Espaçamento interno de 20px */
-            background-color: #f4f4f4;         /* Cor de fundo cinza claro */
-            border-radius: 8px;                /* Bordas arredondadas */
-            box-shadow: 0 0 10px rgba(0,0,0,0.1); /* Sombra sutil ao redor */
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            padding: 20px;
         }
 
-        input, button {
-            /* Estilos aplicados tanto para inputs quanto botões */
-            padding: 8px;                       /* Espaçamento interno */
-            font-size: 1em;                    /* Tamanho da fonte padrão */
-            margin: 5px 0;                     /* Margem vertical de 5px */
-            width: 100%;                       /* Largura total disponível */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
         }
 
-        button {
-            /* Estilos específicos para botões */
-            background-color: #007bff;          /* Cor de fundo azul */
-            color: white;                       /* Texto branco */
-            border: none;                       /* Remove borda padrão */
-            border-radius: 4px;                /* Bordas levemente arredondadas */
-            cursor: pointer;                    /* Muda cursor para indicar clicável */
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 2rem;
         }
 
-        button:hover {
-            /* Efeito quando mouse passa sobre o botão */
-            background-color: #0056b3;          /* Azul mais escuro */
+        .header h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
         }
 
-        #resultado {
-            /* Estilos para área de resultado (não utilizada neste código) */
-            margin-top: 20px;                   /* Margem superior */
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
         }
 
-        .transacao {
-            /* Estilos para cada item de transação */
-            background-color: white;            /* Fundo branco */
-            margin: 5px 0;                     /* Margem vertical */
-            padding: 10px;                     /* Espaçamento interno */
-            border-radius: 4px;                /* Bordas arredondadas */
-            border: 1px solid #ccc;            /* Borda cinza */
+        .card h2 {
+            color: #333;
+            margin-bottom: 1.5rem;
+            font-size: 1.3rem;
+        }
+
+        .blockchain-selector {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .blockchain-btn {
+            padding: 0.5rem 1rem;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            background: #f8f9fa;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .blockchain-btn.active {
+            background: #1e3c72;
+            color: white;
+            border-color: #1e3c72;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            font-family: 'Courier New', monospace;
+            background: #f8f9fa;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #1e3c72;
+            background: white;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .btn-primary {
+            background: #1e3c72;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2a5298;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #545b62;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+        }
+
+        .result {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 8px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .result.valid {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .result.invalid {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .result.info {
+            background: #e3f2fd;
+            color: #0d47a1;
+            border: 1px solid #bbdefb;
+        }
+
+        .transaction-controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .transaction-controls input {
+            flex: 1;
+            min-width: 200px;
+            padding: 0.75rem;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+        }
+
+        .transaction-controls select {
+            padding: 0.75rem;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            background: white;
+        }
+
+        .transaction-item {
+            background: white;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .transaction-item:hover {
+            background: #f8f9fa;
+        }
+
+        .transaction-hash {
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .transaction-value {
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .transaction-value.positive {
+            color: #28a745;
+        }
+
+        .transaction-value.negative {
+            color: #dc3545;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .stat-card {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid #dee2e6;
+        }
+
+        .stat-value {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #1e3c72;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: 0.25rem;
+        }
+
+        @media (max-width: 768px) {
+            .transaction-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
         }
     </style>
 </head>
-
 <body>
-    <!-- Corpo da página - conteúdo visível -->
+    <div class="container">
+        <div class="header">
+            <h1>Validador de Carteiras Blockchain</h1>
+            <p>Valide endereços e gerencie transações</p>
+        </div>
 
-    <h2>Validador de Endereço de Carteira</h2>
-    <!-- Título da primeira seção -->
+        <!-- Validação de Endereços -->
+        <div class="card">
+            <h2>Validação de Endereços</h2>
+            
+            <div class="blockchain-selector">
+                <button class="blockchain-btn active" data-blockchain="ethereum">Ethereum</button>
+                <button class="blockchain-btn" data-blockchain="bitcoin">Bitcoin</button>
+                <button class="blockchain-btn" data-blockchain="polygon">Polygon</button>
+            </div>
 
-    <!-- Campo para inserir endereço da carteira -->
-    <input type="text" id="enderecoInput" placeholder="Digite o endereço da carteira">
-    <!-- 
-    - type="text": campo de texto livre
-    - id="enderecoInput": identificador único para JavaScript
-    - placeholder: texto de exemplo dentro do campo
-    -->
+            <input type="text" id="enderecoInput" class="input-field" 
+                   placeholder="Cole o endereço da carteira aqui...">
 
-    <!-- Botão para validar o endereço -->
-    <button onclick="validarEndereco()">Validar Endereço</button>
-    <!-- onclick="validarEndereco()": chama função JavaScript quando clicado -->
+            <button class="btn btn-primary" onclick="validarEndereco()">Validar Endereço</button>
+            <button class="btn btn-success" onclick="gerarEnderecoTeste()">Gerar Endereço para Teste</button>
 
-    <!-- Div onde será exibido resultado da validação -->
-    <div id="resultadoValidacao"></div>
-    <!-- id="resultadoValidacao": identificador para JavaScript inserir resultado -->
+            <div id="validationResult" class="result" style="display: none;"></div>
+        </div>
 
-    <h2>Transações</h2>
-    <!-- Título da segunda seção -->
+        <!-- Gerenciador de Transações -->
+        <div class="card">
+            <h2>Gerenciador de Transações</h2>
 
-    <!-- Botão para ordenar transações -->
-    <button onclick="ordenarTransacoes()">Ordenar por Valor (Maior → Menor)</button>
-    <!-- onclick="ordenarTransacoes()": chama função de ordenação -->
+            <div class="transaction-controls">
+                <input type="text" id="searchInput" placeholder="Buscar transações..." onkeyup="buscarTransacoes()">
+                <select id="sortSelect" onchange="ordenarTransacoes()">
+                    <option value="date">Data (Mais recente)</option>
+                    <option value="value-desc">Valor (Maior)</option>
+                    <option value="value-asc">Valor (Menor)</option>
+                </select>
+                <button class="btn btn-primary" onclick="adicionarTransacao()">Adicionar Transação</button>
+                <button class="btn btn-secondary" onclick="gerarTransacaoTeste()">Gerar Transação Teste</button>
+            </div>
 
-    <!-- Div onde serão exibidas as transações -->
-    <div id="listaTransacoes"></div>
-    <!-- id="listaTransacoes": identificador para JavaScript inserir lista -->
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-value" id="totalTransactions">0</div>
+                    <div class="stat-label">Total de Transações</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="totalValue">0 ETH</div>
+                    <div class="stat-label">Valor Total</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="avgValue">0 ETH</div>
+                    <div class="stat-label">Valor Médio</div>
+                </div>
+            </div>
+
+            <div id="transactionsList">
+                <!-- Transações serão inseridas aqui -->
+            </div>
+        </div>
+    </div>
 
     <script>
-        /* JavaScript - lógica de programação */
-        
-        // Função para validar endereço de carteira Ethereum
-        function validarEnderecoCarteira(endereco) {
-            /* 
-            Validação simples de endereço Ethereum:
-            - Deve começar com "0x"
-            - Deve ter exatamente 42 caracteres no total
-            */
-            return endereco.startsWith("0x") && endereco.length === 42;
-            // startsWith("0x"): verifica se string começa com "0x"
-            // length === 42: verifica se tem exatamente 42 caracteres
-            // && (AND): ambas condições devem ser verdadeiras
-        }
-
-        // Função chamada quando botão "Validar Endereço" é clicado
-        function validarEndereco() {
-            // Captura valor do campo de entrada e remove espaços em branco
-            const input = document.getElementById('enderecoInput').value.trim();
-            // .trim(): remove espaços no início e fim da string
-            
-            // Captura elemento onde será exibido o resultado
-            const resultado = document.getElementById('resultadoValidacao');
-
-            // Testa se endereço é válido usando função auxiliar
-            if (validarEnderecoCarteira(input)) {
-                // Se válido: exibe mensagem verde
-                resultado.textContent = "✅ Endereço válido!";
-                resultado.style.color = "green";        // Define cor do texto
-            } else {
-                // Se inválido: exibe mensagem vermelha com orientação
-                resultado.textContent = "❌ Endereço inválido. Deve começar com '0x' e ter 42 caracteres.";
-                resultado.style.color = "red";          // Define cor do texto
+        // Estado da aplicação
+        let selectedBlockchain = 'ethereum';
+        let transactions = [
+            {
+                hash: '0xabc123def456...',
+                from: '0x1234567890123456789012345678901234567890',
+                to: '0x0987654321098765432109876543210987654321',
+                value: 1.5,
+                type: 'sent',
+                date: new Date('2024-01-15'),
+            },
+            {
+                hash: '0xdef456ghi789...',
+                from: '0x0987654321098765432109876543210987654321',
+                to: '0x1234567890123456789012345678901234567890',
+                value: 2.3,
+                type: 'received',
+                date: new Date('2024-01-14'),
             }
-        }
-
-        // Array (lista) de transações - dados hardcoded para demonstração
-        let transacoes = [
-            { endereco: "0xabc123...", valor: 250 },    // Objeto com propriedades endereco e valor
-            { endereco: "0x123abc...", valor: 100 },
-            { endereco: "0x456def...", valor: 500 }
         ];
-        // Note que 'let' permite modificação posterior (diferente de 'const')
+        let filteredTransactions = [...transactions];
 
-        // Função para exibir transações na tela
-        function exibirTransacoes() {
-            // Captura elemento container da lista
-            const lista = document.getElementById('listaTransacoes');
-            
-            // Limpa conteúdo anterior
-            lista.innerHTML = '';
-            // innerHTML = '': remove todo conteúdo HTML interno
+        // Padrões de validação
+        const blockchainPatterns = {
+            ethereum: {
+                pattern: /^0x[a-fA-F0-9]{40}$/,
+                name: 'Ethereum'
+            },
+            bitcoin: {
+                pattern: /^[13][a-km-zA-HJ-NP-Z1-9]{25,34}$|^bc1[a-z0-9]{39,59}$/,
+                name: 'Bitcoin'
+            },
+            polygon: {
+                pattern: /^0x[a-fA-F0-9]{40}$/,
+                name: 'Polygon'
+            }
+        };
 
-            // Itera sobre cada transação no array
-            transacoes.forEach(tx => {
-                // forEach(): executa função para cada item do array
-                // tx: variável que representa cada transação atual
-                
-                // Cria novo elemento div para cada transação
-                const div = document.createElement('div');
-                // createElement(): cria elemento HTML dinamicamente
-                
-                // Define classe CSS para estilização
-                div.className = 'transacao';
-                
-                // Define conteúdo textual da div
-                div.innerText = `Endereço: ${tx.endereco} | Valor: ${tx.valor}`;
-                // Template literal (`${}`) para inserir variáveis na string
-                // tx.endereco e tx.valor: acessa propriedades do objeto
-                
-                // Adiciona div criada ao container da lista
-                lista.appendChild(div);
-                // appendChild(): anexa elemento filho ao elemento pai
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            setupEventListeners();
+            renderTransactions();
+            updateStats();
+        });
+
+        function setupEventListeners() {
+            document.querySelectorAll('.blockchain-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.blockchain-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    selectedBlockchain = this.dataset.blockchain;
+                });
             });
         }
 
-        // Função para ordenar transações por valor
-        function ordenarTransacoes() {
-            // Ordena array de transações usando sort()
-            transacoes.sort((a, b) => b.valor - a.valor);
-            /* 
-            sort(): método que ordena elementos do array
-            (a, b) => b.valor - a.valor: função de comparação
-            - Se b.valor > a.valor: retorna número positivo (b vem antes)
-            - Se b.valor < a.valor: retorna número negativo (a vem antes)
-            - Se iguais: retorna 0 (mantém ordem)
-            Resultado: ordem decrescente (maior para menor)
-            */
+        function gerarEnderecoTeste() {
+            const enderecos = {
+                ethereum: [
+                    '0x742d35Cc6C6C92e54F6Bd23e8Df6CE78eDa3e3E4',
+                    '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045',
+                    '0xBE0eB53F46cd790Cd13851d5EFf43D12404d33E8',
+                    '0x8ba1f109551bD432803012645Hac136c56FE',
+                    '0x4E83362442B8d1beC281594ceA3050c8EB01311C'
+                ],
+                bitcoin: [
+                    '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa',
+                    '3J98t1WpEZ73CNmQviecrnyiWrnqRhWNLy',
+                    'bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kv8f3t4',
+                    '1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2',
+                    '3QJmV3qfvL9SuYo34YihAf3sRCW3qSinyC'
+                ],
+                polygon: [
+                    '0x742d35Cc6C6C92e54F6Bd23e8Df6CE78eDa3e3E4',
+                    '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045',
+                    '0xBE0eB53F46cd790Cd13851d5EFf43D12404d33E8'
+                ]
+            };
+
+            const enderecosSelecionados = enderecos[selectedBlockchain];
+            const enderecoAleatorio = enderecosSelecionados[Math.floor(Math.random() * enderecosSelecionados.length)];
             
-            // Atualiza exibição com nova ordem
-            exibirTransacoes();
+            document.getElementById('enderecoInput').value = enderecoAleatorio;
+            
+            showResult(`Endereço ${blockchainPatterns[selectedBlockchain].name} gerado para teste!`, 'info');
         }
 
-        // Executa função quando página termina de carregar
-        exibirTransacoes();
-        // Chama função para exibir transações inicialmente
-    </script>
+        function validarEndereco() {
+            const endereco = document.getElementById('enderecoInput').value.trim();
+            
+            if (!endereco) {
+                showResult('Por favor, insira um endereço.', 'invalid');
+                return;
+            }
 
+            const pattern = blockchainPatterns[selectedBlockchain];
+            const isValid = pattern.pattern.test(endereco);
+
+            if (isValid) {
+                showResult(`✓ Endereço ${pattern.name} válido!`, 'valid');
+            } else {
+                showResult(`✗ Endereço ${pattern.name} inválido.`, 'invalid');
+            }
+        }
+
+        function showResult(message, type) {
+            const result = document.getElementById('validationResult');
+            result.textContent = message;
+            result.className = `result ${type}`;
+            result.style.display = 'block';
+        }
+
+        function gerarTransacaoTeste() {
+            const hashes = [
+                '0x' + Math.random().toString(16).substr(2, 64),
+                '0x' + Math.random().toString(16).substr(2, 64),
+                '0x' + Math.random().toString(16).substr(2, 64)
+            ];
+
+            const enderecos = [
+                '0x742d35Cc6C6C92e54F6Bd23e8Df6CE78eDa3e3E4',
+                '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045',
+                '0xBE0eB53F46cd790Cd13851d5EFf43D12404d33E8'
+            ];
+
+            const tipos = ['sent', 'received'];
+            const valores = [0.1, 0.5, 1.2, 2.8, 5.0, 10.5];
+
+            const novaTransacao = {
+                hash: hashes[Math.floor(Math.random() * hashes.length)],
+                from: enderecos[Math.floor(Math.random() * enderecos.length)],
+                to: enderecos[Math.floor(Math.random() * enderecos.length)],
+                value: valores[Math.floor(Math.random() * valores.length)],
+                type: tipos[Math.floor(Math.random() * tipos.length)],
+                date: new Date()
+            };
+
+            transactions.unshift(novaTransacao);
+            filteredTransactions = [...transactions];
+            renderTransactions();
+            updateStats();
+        }
+
+        function adicionarTransacao() {
+            const hash = prompt('Hash da transação (ex: 0x123...):', '0x' + Math.random().toString(16).substr(2, 64));
+            const from = prompt('Endereço de origem:', '0x742d35Cc6C6C92e54F6Bd23e8Df6CE78eDa3e3E4');
+            const to = prompt('Endereço de destino:', '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045');
+            const value = parseFloat(prompt('Valor (em ETH):', '1.0'));
+            const type = prompt('Tipo (sent/received):', 'sent');
+
+            if (hash && from && to && !isNaN(value)) {
+                const novaTransacao = {
+                    hash,
+                    from,
+                    to,
+                    value,
+                    type,
+                    date: new Date()
+                };
+
+                transactions.unshift(novaTransacao);
+                filteredTransactions = [...transactions];
+                renderTransactions();
+                updateStats();
+            }
+        }
+
+        function buscarTransacoes() {
+            const termo = document.getElementById('searchInput').value.toLowerCase();
+            
+            if (!termo) {
+                filteredTransactions = [...transactions];
+            } else {
+                filteredTransactions = transactions.filter(tx => 
+                    tx.hash.toLowerCase().includes(termo) ||
+                    tx.from.toLowerCase().includes(termo) ||
+                    tx.to.toLowerCase().includes(termo) ||
+                    tx.value.toString().includes(termo)
+                );
+            }
+            
+            renderTransactions();
+        }
+
+        function ordenarTransacoes() {
+            const sortBy = document.getElementById('sortSelect').value;
+            
+            filteredTransactions.sort((a, b) => {
+                switch (sortBy) {
+                    case 'date':
+                        return new Date(b.date) - new Date(a.date);
+                    case 'value-desc':
+                        return b.value - a.value;
+                    case 'value-asc':
+                        return a.value - b.value;
+                    default:
+                        return 0;
+                }
+            });
+            
+            renderTransactions();
+        }
+
+        function renderTransactions() {
+            const container = document.getElementById('transactionsList');
+            
+            if (filteredTransactions.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #666; padding: 2rem;">Nenhuma transação encontrada</p>';
+                return;
+            }
+
+            container.innerHTML = filteredTransactions.map(tx => `
+                <div class="transaction-item">
+                    <div>
+                        <div class="transaction-hash">${truncateHash(tx.hash)}</div>
+                        <div>${tx.type === 'received' ? 'De' : 'Para'}: ${truncateAddress(tx.type === 'received' ? tx.from : tx.to)}</div>
+                        <div style="font-size: 0.8rem; color: #666;">${formatDate(tx.date)}</div>
+                    </div>
+                    <div class="transaction-value ${tx.type === 'received' ? 'positive' : 'negative'}">
+                        ${tx.type === 'received' ? '+' : '-'}${tx.value} ETH
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updateStats() {
+            const total = transactions.length;
+            const totalValue = transactions.reduce((sum, tx) => sum + tx.value, 0);
+            const avgValue = total > 0 ? totalValue / total : 0;
+
+            document.getElementById('totalTransactions').textContent = total;
+            document.getElementById('totalValue').textContent = totalValue.toFixed(2) + ' ETH';
+            document.getElementById('avgValue').textContent = avgValue.toFixed(2) + ' ETH';
+        }
+
+        function truncateHash(hash) {
+            return hash.substring(0, 10) + '...' + hash.substring(hash.length - 8);
+        }
+
+        function truncateAddress(address) {
+            return address.substring(0, 6) + '...' + address.substring(address.length - 4);
+        }
+
+        function formatDate(date) {
+            return new Date(date).toLocaleString('pt-BR');
+        }
+
+        // Inicializar na carga da página
+        renderTransactions();
+        updateStats();
+    </script>
 </body>
 </html>

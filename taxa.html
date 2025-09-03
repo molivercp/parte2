@@ -1,151 +1,606 @@
 <!DOCTYPE html>
-<!-- Declaração do tipo de documento HTML5 -->
 <html lang="pt-BR">
-<!-- Elemento raiz HTML com idioma definido como português brasileiro -->
-
 <head>
-    <!-- Seção de metadados do documento -->
     <meta charset="UTF-8">
-    <!-- Define codificação de caracteres como UTF-8 para suportar acentos -->
-    
-    <title>Calculadora de Juros Compostos</title>
-    <!-- Título que aparece na aba do navegador -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Juros Compostos - Avançada</title>
     
     <style>
-        /* CSS interno - estilos para formatação da página */
-        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            /* Estilos para o corpo da página */
-            font-family: Arial, sans-serif;     /* Define fonte padrão */
-            max-width: 500px;                   /* Largura máxima de 500px */
-            margin: 50px auto;                  /* Margem de 50px em cima/baixo e centraliza horizontalmente */
-            padding: 20px;                      /* Espaçamento interno de 20px */
-            background-color: #f9f9f9;         /* Cor de fundo cinza claro */
-            border-radius: 8px;                /* Bordas arredondadas */
-            box-shadow: 0 0 10px rgba(0,0,0,0.1); /* Sombra sutil ao redor */
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            animation: fadeIn 0.8s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 2.5rem;
+            border-radius: 24px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+            max-width: 800px;
+            width: 100%;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 2rem;
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group.full-width {
+            grid-column: span 2;
         }
 
         label {
-            /* Estilos para os rótulos dos campos */
-            display: block;                     /* Faz o label ocupar linha inteira */
-            margin: 10px 0 5px;                /* Margens: 10px acima, 5px abaixo */
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
         }
 
-        input[type="number"] {
-            /* Estilos específicos para campos de entrada numéricos */
-            width: 100%;                       /* Largura total disponível */
-            padding: 8px;                      /* Espaçamento interno */
-            margin-bottom: 15px;               /* Margem inferior */
-            border: 1px solid #ccc;            /* Borda cinza */
-            border-radius: 4px;                /* Bordas levemente arredondadas */
+        input[type="number"], select {
+            padding: 1rem;
+            border: 2px solid #e1e5e9;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        input[type="number"]:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            transform: translateY(-1px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);
+        }
+
+        .input-with-symbol {
+            position: relative;
+        }
+
+        .input-symbol {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+            font-weight: 600;
+            pointer-events: none;
+        }
+
+        .input-with-symbol input {
+            padding-left: 40px;
+        }
+
+        .buttons-container {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
         }
 
         button {
-            /* Estilos para o botão */
-            background-color: #28a745;          /* Cor de fundo verde */
-            color: white;                       /* Texto branco */
-            padding: 10px 15px;                /* Espaçamento interno */
-            border: none;                       /* Remove borda padrão */
-            border-radius: 4px;                /* Bordas arredondadas */
-            cursor: pointer;                    /* Muda cursor para indicar clicável */
+            flex: 1;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }
 
-        button:hover {
-            /* Efeito quando mouse passa sobre o botão */
-            background-color: #218838;          /* Verde mais escuro */
+        .btn-primary {
+            background: linear-gradient(45deg, #28a745, #20c997);
+            color: white;
         }
 
-        #resultado {
-            /* Estilos para área de resultado */
-            margin-top: 20px;                   /* Margem superior */
-            font-size: 1.2em;                  /* Fonte 20% maior que normal */
-            font-weight: bold;                  /* Texto em negrito */
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 25px rgba(40, 167, 69, 0.3);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+
+        .results-container {
+            display: none;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result-card {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid #dee2e6;
+        }
+
+        .main-result {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .amount-display {
+            font-size: 3rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, #28a745, #20c997);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .profit-display {
+            font-size: 1.5rem;
+            color: #495057;
+            margin-bottom: 1rem;
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .detail-item {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid #e9ecef;
+        }
+
+        .detail-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .detail-label {
+            font-size: 0.9rem;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .breakdown-table {
+            margin-top: 2rem;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: center;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        th {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 1rem;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 1rem;
+            border: 1px solid #f5c6cb;
+        }
+
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            cursor: help;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 200px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 8px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -100px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.8rem;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .info-icon {
+            color: #667eea;
+            font-size: 0.8rem;
+            margin-left: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.5rem;
+                margin: 10px;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-group.full-width {
+                grid-column: span 1;
+            }
+            
+            .amount-display {
+                font-size: 2rem;
+            }
+            
+            .buttons-container {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
-
 <body>
-    <!-- Corpo da página - conteúdo visível -->
+    <div class="container">
+        <h1>💰 Calculadora de Juros Compostos</h1>
+        
+        <form id="calculatorForm">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="capital">
+                        Capital Inicial 
+                        <span class="tooltip">ℹ️
+                            <span class="tooltiptext">Valor inicial que será investido</span>
+                        </span>
+                    </label>
+                    <div class="input-with-symbol">
+                        <span class="input-symbol">R$</span>
+                        <input type="number" id="capital" placeholder="10.000" step="0.01" min="0">
+                    </div>
+                </div>
 
-    <h2>Calculadora de Juros Compostos</h2>
-    <!-- Título principal da calculadora -->
+                <div class="form-group">
+                    <label for="taxa">
+                        Taxa de Juros 
+                        <span class="tooltip">ℹ️
+                            <span class="tooltiptext">Taxa de rendimento por período</span>
+                        </span>
+                    </label>
+                    <div class="input-with-symbol">
+                        <span class="input-symbol">%</span>
+                        <input type="number" id="taxa" placeholder="10,5" step="0.01" min="0">
+                    </div>
+                </div>
 
-    <!-- Campo para inserir o capital inicial -->
-    <label for="capital">Capital Inicial (R$):</label>
-    <!-- Rótulo explicativo vinculado ao campo "capital" -->
-    <input type="number" id="capital" placeholder="Ex: 1000" step="0.01">
-    <!-- 
-    - type="number": aceita apenas números
-    - id="capital": identificador único para JavaScript
-    - placeholder: texto de exemplo
-    - step="0.01": permite valores decimais com 2 casas
-    -->
+                <div class="form-group">
+                    <label for="periodos">
+                        Número de Períodos
+                        <span class="tooltip">ℹ️
+                            <span class="tooltiptext">Quantidade de períodos de investimento</span>
+                        </span>
+                    </label>
+                    <input type="number" id="periodos" placeholder="60" min="1">
+                </div>
 
-    <!-- Campo para inserir a taxa de juros -->
-    <label for="taxa">Taxa de Juros (%):</label>
-    <input type="number" id="taxa" placeholder="Ex: 10" step="0.01">
+                <div class="form-group">
+                    <label for="tipoPeriodo">Tipo de Período</label>
+                    <select id="tipoPeriodo">
+                        <option value="mensal">Mensal</option>
+                        <option value="anual">Anual</option>
+                        <option value="diario">Diário</option>
+                    </select>
+                </div>
 
-    <!-- Campo para inserir número de períodos -->
-    <label for="periodos">Períodos (meses ou anos):</label>
-    <input type="number" id="periodos" placeholder="Ex: 5">
-    <!-- Note que períodos não tem step, então aceita apenas números inteiros -->
+                <div class="form-group">
+                    <label for="aportes">
+                        Aportes Regulares
+                        <span class="tooltip">ℹ️
+                            <span class="tooltiptext">Valor adicionado a cada período (opcional)</span>
+                        </span>
+                    </label>
+                    <div class="input-with-symbol">
+                        <span class="input-symbol">R$</span>
+                        <input type="number" id="aportes" placeholder="500" step="0.01" min="0" value="0">
+                    </div>
+                </div>
 
-    <!-- Botão que executa o cálculo -->
-    <button onclick="calcular()">Calcular</button>
-    <!-- onclick="calcular()": chama função JavaScript quando clicado -->
+                <div class="form-group">
+                    <label for="inflacao">
+                        Inflação (%)
+                        <span class="tooltip">ℹ️
+                            <span class="tooltiptext">Taxa de inflação para cálculo do valor real</span>
+                        </span>
+                    </label>
+                    <div class="input-with-symbol">
+                        <span class="input-symbol">%</span>
+                        <input type="number" id="inflacao" placeholder="5,0" step="0.01" min="0" value="0">
+                    </div>
+                </div>
+            </div>
 
-    <!-- Div onde será exibido o resultado -->
-    <div id="resultado"></div>
-    <!-- id="resultado": identificador para JavaScript inserir o resultado -->
+            <div class="buttons-container">
+                <button type="button" class="btn-primary" onclick="calcular()">
+                    📊 Calcular Investimento
+                </button>
+                <button type="button" class="btn-secondary" onclick="limpar()">
+                    🔄 Limpar Campos
+                </button>
+            </div>
+        </form>
+
+        <div id="error-container"></div>
+        
+        <div id="results-container" class="results-container">
+            <div class="result-card">
+                <div class="main-result">
+                    <div class="amount-display" id="valor-final">R$ 0,00</div>
+                    <div class="profit-display">
+                        Lucro: <span id="lucro-total">R$ 0,00</span>
+                    </div>
+                </div>
+
+                <div class="details-grid">
+                    <div class="detail-item">
+                        <div class="detail-value" id="capital-investido">R$ 0,00</div>
+                        <div class="detail-label">Capital Total Investido</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-value" id="rendimento-percentual">0%</div>
+                        <div class="detail-label">Rendimento Total</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-value" id="valor-real">R$ 0,00</div>
+                        <div class="detail-label">Valor Real (descontada inflação)</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-value" id="renda-mensal">R$ 0,00</div>
+                        <div class="detail-label">Renda Mensal Equivalente</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="breakdown-table">
+                <h3 style="margin-bottom: 1rem; color: #333;">Evolução do Investimento</h3>
+                <table id="tabela-evolucao">
+                    <thead>
+                        <tr>
+                            <th>Período</th>
+                            <th>Aporte</th>
+                            <th>Juros</th>
+                            <th>Saldo</th>
+                            <th>Saldo Real</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbody-evolucao">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 
     <script>
-        /* JavaScript - lógica de programação */
-        
-        // Função que implementa a fórmula matemática dos juros compostos
-        function calcularJurosCompostos(capital, taxa, periodos) {
-            /* 
-            Fórmula: M = C × (1 + i)^n
-            Onde:
-            - M = Montante final
-            - C = Capital inicial
-            - i = Taxa de juros (em decimal)
-            - n = Número de períodos
-            */
-            return capital * Math.pow((1 + taxa), periodos);
-            // Math.pow() calcula potenciação: (1 + taxa) elevado a 'periodos'
+        function calcularJurosCompostos(capital, taxa, periodos, aportes = 0) {
+            let saldo = capital;
+            const evolucao = [];
+            
+            for (let i = 1; i <= periodos; i++) {
+                const juros = saldo * taxa;
+                saldo += juros + aportes;
+                
+                evolucao.push({
+                    periodo: i,
+                    aporte: aportes,
+                    juros: juros,
+                    saldo: saldo
+                });
+            }
+            
+            return { saldoFinal: saldo, evolucao };
         }
 
-        // Função principal que é executada quando botão é clicado
-        function calcular() {
-            // Captura valores dos campos HTML e converte para números
-            let capital = parseFloat(document.getElementById('capital').value);
-            // parseFloat(): converte string em número decimal
-            // document.getElementById(): busca elemento pelo ID
-            // .value: obtém o valor digitado no campo
-            
-            let taxa = parseFloat(document.getElementById('taxa').value) / 100;
-            // Divide por 100 para converter porcentagem em decimal (10% = 0.10)
-            
-            let periodos = parseInt(document.getElementById('periodos').value);
-            // parseInt(): converte string em número inteiro
+        function calcularValorReal(valor, inflacao, periodos) {
+            return valor / Math.pow(1 + inflacao, periodos);
+        }
 
-            // Validação: verifica se todos os campos foram preenchidos corretamente
-            if (isNaN(capital) || isNaN(taxa) || isNaN(periodos)) {
-                // isNaN(): verifica se valor "is Not a Number"
-                document.getElementById('resultado').innerText = "Preencha todos os campos corretamente.";
-                return; // Para execução da função se houver erro
+        function formatarMoeda(valor) {
+            return new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            }).format(valor);
+        }
+
+        function formatarPorcentagem(valor) {
+            return (valor * 100).toFixed(2) + '%';
+        }
+
+        function mostrarErro(mensagem) {
+            const errorContainer = document.getElementById('error-container');
+            errorContainer.innerHTML = `<div class="error-message">${mensagem}</div>`;
+            setTimeout(() => {
+                errorContainer.innerHTML = '';
+            }, 5000);
+        }
+
+        function validarInputs() {
+            const capital = parseFloat(document.getElementById('capital').value);
+            const taxa = parseFloat(document.getElementById('taxa').value);
+            const periodos = parseInt(document.getElementById('periodos').value);
+
+            if (isNaN(capital) || capital <= 0) {
+                mostrarErro('Por favor, insira um capital inicial válido.');
+                return false;
             }
 
-            // Se validação passou, executa o cálculo
-            let resultado = calcularJurosCompostos(capital, taxa, periodos);
-            
-            // Exibe resultado formatado na tela
-            document.getElementById('resultado').innerText =
-                `Valor final: R$ ${resultado.toFixed(2)}`;
-            // toFixed(2): limita a 2 casas decimais
-            // Template literal (`${}`) para inserir variável na string
-        }
-    </script>
+            if (isNaN(taxa) || taxa < 0) {
+                mostrarErro('Por favor, insira uma taxa de juros válida.');
+                return false;
+            }
 
+            if (isNaN(periodos) || periodos <= 0) {
+                mostrarErro('Por favor, insira um número de períodos válido.');
+                return false;
+            }
+
+            return true;
+        }
+
+        function calcular() {
+            if (!validarInputs()) return;
+
+            // Capturar valores
+            const capital = parseFloat(document.getElementById('capital').value);
+            const taxaInput = parseFloat(document.getElementById('taxa').value);
+            const periodos = parseInt(document.getElementById('periodos').value);
+            const aportes = parseFloat(document.getElementById('aportes').value) || 0;
+            const inflacaoInput = parseFloat(document.getElementById('inflacao').value) || 0;
+            const tipoPeriodo = document.getElementById('tipoPeriodo').value;
+
+            // Converter taxas para decimal
+            const taxa = taxaInput / 100;
+            const inflacao = inflacaoInput / 100;
+
+            // Calcular
+            const resultado = calcularJurosCompostos(capital, taxa, periodos, aportes);
+            const valorFinal = resultado.saldoFinal;
+            const capitalTotalInvestido = capital + (aportes * periodos);
+            const lucroTotal = valorFinal - capitalTotalInvestido;
+            const rendimentoPercentual = (lucroTotal / capitalTotalInvestido);
+            const valorReal = calcularValorReal(valorFinal, inflacao, periodos);
+            
+            // Calcular renda mensal equivalente (4% ao ano)
+            const rendaMensal = valorFinal * 0.04 / 12;
+
+            // Atualizar interface
+            document.getElementById('valor-final').textContent = formatarMoeda(valorFinal);
+            document.getElementById('lucro-total').textContent = formatarMoeda(lucroTotal);
+            document.getElementById('capital-investido').textContent = formatarMoeda(capitalTotalInvestido);
+            document.getElementById('rendimento-percentual').textContent = formatarPorcentagem(rendimentoPercentual);
+            document.getElementById('valor-real').textContent = formatarMoeda(valorReal);
+            document.getElementById('renda-mensal').textContent = formatarMoeda(rendaMensal);
+
+            // Preencher tabela de evolução
+            const tbody = document.getElementById('tbody-evolucao');
+            tbody.innerHTML = '';
+            
+            // Mostrar apenas alguns períodos chave para não sobrecarregar
+            const periodosParaMostrar = Math.min(10, periodos);
+            const intervalo = Math.max(1, Math.floor(periodos / periodosParaMostrar));
+            
+            for (let i = 0; i < resultado.evolucao.length; i += intervalo) {
+                const item = resultado.evolucao[i];
+                const valorRealPeriodo = calcularValorReal(item.saldo, inflacao, item.periodo);
+                
+                const row = tbody.insertRow();
+                row.insertCell(0).textContent = item.periodo;
+                row.insertCell(1).textContent = formatarMoeda(item.aporte);
+                row.insertCell(2).textContent = formatarMoeda(item.juros);
+                row.insertCell(3).textContent = formatarMoeda(item.saldo);
+                row.insertCell(4).textContent = formatarMoeda(valorRealPeriodo);
+            }
+
+            // Mostrar resultados
+            document.getElementById('results-container').style.display = 'block';
+            document.getElementById('results-container').scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'start' 
+            });
+        }
+
+        function limpar() {
+            document.getElementById('calculatorForm').reset();
+            document.getElementById('results-container').style.display = 'none';
+            document.getElementById('error-container').innerHTML = '';
+            document.getElementById('aportes').value = '0';
+            document.getElementById('inflacao').value = '0';
+        }
+
+        // Formatação automática de campos monetários
+        document.addEventListener('DOMContentLoaded', function() {
+            const campos = ['capital', 'aportes'];
+            campos.forEach(id => {
+                const campo = document.getElementById(id);
+                campo.addEventListener('blur', function() {
+                    if (this.value) {
+                        this.value = parseFloat(this.value).toFixed(2);
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>
