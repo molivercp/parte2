@@ -1,112 +1,201 @@
 <!DOCTYPE html>
+<!-- Declaração do tipo de documento HTML5 -->
 <html lang="pt-BR">
+<!-- Elemento raiz HTML com idioma definido como português brasileiro -->
+
 <head>
+    <!-- Seção de metadados do documento -->
     <meta charset="UTF-8">
+    <!-- Define codificação de caracteres como UTF-8 para suportar acentos -->
+    
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Configuração para dispositivos móveis - torna a página responsiva -->
+    
     <title>Validador de Carteiras e Transações</title>
+    <!-- Título que aparece na aba do navegador -->
+    
     <style>
+        /* CSS interno - estilos para formatação da página */
+        
         body {
-            font-family: Arial, sans-serif;
-            max-width: 600px;
-            margin: 40px auto;
-            padding: 20px;
-            background-color: #f4f4f4;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            /* Estilos para o corpo da página */
+            font-family: Arial, sans-serif;     /* Define fonte padrão */
+            max-width: 600px;                   /* Largura máxima de 600px */
+            margin: 40px auto;                  /* Margem de 40px em cima/baixo e centraliza horizontalmente */
+            padding: 20px;                      /* Espaçamento interno de 20px */
+            background-color: #f4f4f4;         /* Cor de fundo cinza claro */
+            border-radius: 8px;                /* Bordas arredondadas */
+            box-shadow: 0 0 10px rgba(0,0,0,0.1); /* Sombra sutil ao redor */
         }
 
         input, button {
-            padding: 8px;
-            font-size: 1em;
-            margin: 5px 0;
-            width: 100%;
+            /* Estilos aplicados tanto para inputs quanto botões */
+            padding: 8px;                       /* Espaçamento interno */
+            font-size: 1em;                    /* Tamanho da fonte padrão */
+            margin: 5px 0;                     /* Margem vertical de 5px */
+            width: 100%;                       /* Largura total disponível */
         }
 
         button {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
+            /* Estilos específicos para botões */
+            background-color: #007bff;          /* Cor de fundo azul */
+            color: white;                       /* Texto branco */
+            border: none;                       /* Remove borda padrão */
+            border-radius: 4px;                /* Bordas levemente arredondadas */
+            cursor: pointer;                    /* Muda cursor para indicar clicável */
         }
 
         button:hover {
-            background-color: #0056b3;
+            /* Efeito quando mouse passa sobre o botão */
+            background-color: #0056b3;          /* Azul mais escuro */
         }
 
         #resultado {
-            margin-top: 20px;
+            /* Estilos para área de resultado (não utilizada neste código) */
+            margin-top: 20px;                   /* Margem superior */
         }
 
         .transacao {
-            background-color: white;
-            margin: 5px 0;
-            padding: 10px;
-            border-radius: 4px;
-            border: 1px solid #ccc;
+            /* Estilos para cada item de transação */
+            background-color: white;            /* Fundo branco */
+            margin: 5px 0;                     /* Margem vertical */
+            padding: 10px;                     /* Espaçamento interno */
+            border-radius: 4px;                /* Bordas arredondadas */
+            border: 1px solid #ccc;            /* Borda cinza */
         }
     </style>
 </head>
+
 <body>
+    <!-- Corpo da página - conteúdo visível -->
 
     <h2>Validador de Endereço de Carteira</h2>
+    <!-- Título da primeira seção -->
 
+    <!-- Campo para inserir endereço da carteira -->
     <input type="text" id="enderecoInput" placeholder="Digite o endereço da carteira">
-    <button onclick="validarEndereco()">Validar Endereço</button>
+    <!-- 
+    - type="text": campo de texto livre
+    - id="enderecoInput": identificador único para JavaScript
+    - placeholder: texto de exemplo dentro do campo
+    -->
 
+    <!-- Botão para validar o endereço -->
+    <button onclick="validarEndereco()">Validar Endereço</button>
+    <!-- onclick="validarEndereco()": chama função JavaScript quando clicado -->
+
+    <!-- Div onde será exibido resultado da validação -->
     <div id="resultadoValidacao"></div>
+    <!-- id="resultadoValidacao": identificador para JavaScript inserir resultado -->
 
     <h2>Transações</h2>
+    <!-- Título da segunda seção -->
 
+    <!-- Botão para ordenar transações -->
     <button onclick="ordenarTransacoes()">Ordenar por Valor (Maior → Menor)</button>
+    <!-- onclick="ordenarTransacoes()": chama função de ordenação -->
 
+    <!-- Div onde serão exibidas as transações -->
     <div id="listaTransacoes"></div>
+    <!-- id="listaTransacoes": identificador para JavaScript inserir lista -->
 
     <script>
-        // Função para validar um endereço de carteira Ethereum
+        /* JavaScript - lógica de programação */
+        
+        // Função para validar endereço de carteira Ethereum
         function validarEnderecoCarteira(endereco) {
+            /* 
+            Validação simples de endereço Ethereum:
+            - Deve começar com "0x"
+            - Deve ter exatamente 42 caracteres no total
+            */
             return endereco.startsWith("0x") && endereco.length === 42;
+            // startsWith("0x"): verifica se string começa com "0x"
+            // length === 42: verifica se tem exatamente 42 caracteres
+            // && (AND): ambas condições devem ser verdadeiras
         }
 
+        // Função chamada quando botão "Validar Endereço" é clicado
         function validarEndereco() {
+            // Captura valor do campo de entrada e remove espaços em branco
             const input = document.getElementById('enderecoInput').value.trim();
+            // .trim(): remove espaços no início e fim da string
+            
+            // Captura elemento onde será exibido o resultado
             const resultado = document.getElementById('resultadoValidacao');
 
+            // Testa se endereço é válido usando função auxiliar
             if (validarEnderecoCarteira(input)) {
+                // Se válido: exibe mensagem verde
                 resultado.textContent = "✅ Endereço válido!";
-                resultado.style.color = "green";
+                resultado.style.color = "green";        // Define cor do texto
             } else {
+                // Se inválido: exibe mensagem vermelha com orientação
                 resultado.textContent = "❌ Endereço inválido. Deve começar com '0x' e ter 42 caracteres.";
-                resultado.style.color = "red";
+                resultado.style.color = "red";          // Define cor do texto
             }
         }
 
-        // Lista de transações
+        // Array (lista) de transações - dados hardcoded para demonstração
         let transacoes = [
-            { endereco: "0xabc123...", valor: 250 },
+            { endereco: "0xabc123...", valor: 250 },    // Objeto com propriedades endereco e valor
             { endereco: "0x123abc...", valor: 100 },
             { endereco: "0x456def...", valor: 500 }
         ];
+        // Note que 'let' permite modificação posterior (diferente de 'const')
 
+        // Função para exibir transações na tela
         function exibirTransacoes() {
+            // Captura elemento container da lista
             const lista = document.getElementById('listaTransacoes');
+            
+            // Limpa conteúdo anterior
             lista.innerHTML = '';
+            // innerHTML = '': remove todo conteúdo HTML interno
 
+            // Itera sobre cada transação no array
             transacoes.forEach(tx => {
+                // forEach(): executa função para cada item do array
+                // tx: variável que representa cada transação atual
+                
+                // Cria novo elemento div para cada transação
                 const div = document.createElement('div');
+                // createElement(): cria elemento HTML dinamicamente
+                
+                // Define classe CSS para estilização
                 div.className = 'transacao';
+                
+                // Define conteúdo textual da div
                 div.innerText = `Endereço: ${tx.endereco} | Valor: ${tx.valor}`;
+                // Template literal (`${}`) para inserir variáveis na string
+                // tx.endereco e tx.valor: acessa propriedades do objeto
+                
+                // Adiciona div criada ao container da lista
                 lista.appendChild(div);
+                // appendChild(): anexa elemento filho ao elemento pai
             });
         }
 
+        // Função para ordenar transações por valor
         function ordenarTransacoes() {
+            // Ordena array de transações usando sort()
             transacoes.sort((a, b) => b.valor - a.valor);
+            /* 
+            sort(): método que ordena elementos do array
+            (a, b) => b.valor - a.valor: função de comparação
+            - Se b.valor > a.valor: retorna número positivo (b vem antes)
+            - Se b.valor < a.valor: retorna número negativo (a vem antes)
+            - Se iguais: retorna 0 (mantém ordem)
+            Resultado: ordem decrescente (maior para menor)
+            */
+            
+            // Atualiza exibição com nova ordem
             exibirTransacoes();
         }
 
-        // Exibe transações ao carregar a página
+        // Executa função quando página termina de carregar
         exibirTransacoes();
+        // Chama função para exibir transações inicialmente
     </script>
 
 </body>

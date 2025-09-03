@@ -1,316 +1,402 @@
 <!DOCTYPE html>
+<!-- Declaração do tipo de documento HTML5 -->
 <html lang="pt-BR">
+<!-- Elemento raiz HTML com idioma definido como português brasileiro -->
+
 <head>
+    <!-- Seção de metadados do documento -->
     <meta charset="UTF-8">
+    <!-- Define codificação de caracteres como UTF-8 para suportar acentos -->
+    
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Configuração para dispositivos móveis - torna a página responsiva -->
+    
     <title>Verificador de Força de Senhas Financeiras</title>
+    <!-- Título que aparece na aba do navegador -->
+    
     <style>
+        /* CSS interno - estilos para formatação da página */
+        
         * {
+            /* Reset CSS - remove margens e paddings padrões de todos elementos */
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
+            box-sizing: border-box;              /* Inclui padding e border no cálculo da largura */
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
+            /* Estilos para o corpo da página */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Fonte moderna */
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); /* Gradiente de fundo */
+            min-height: 100vh;                   /* Altura mínima = altura da janela */
+            display: flex;                       /* Layout flexível */
+            align-items: center;                 /* Centraliza verticalmente */
+            justify-content: center;             /* Centraliza horizontalmente */
+            padding: 20px;                       /* Espaçamento interno */
         }
 
         .container {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 2rem;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            max-width: 500px;
-            width: 100%;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            /* Container principal da aplicação */
+            background: rgba(255, 255, 255, 0.95); /* Fundo branco semi-transparente */
+            padding: 2rem;                       /* Espaçamento interno generoso */
+            border-radius: 20px;                 /* Bordas bem arredondadas */
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1); /* Sombra suave e profunda */
+            max-width: 500px;                    /* Largura máxima */
+            width: 100%;                         /* Largura total disponível */
+            backdrop-filter: blur(10px);         /* Efeito de vidro fosco */
+            border: 1px solid rgba(255, 255, 255, 0.2); /* Borda sutil */
         }
 
         h1 {
-            text-align: center;
-            color: #333;
-            margin-bottom: 2rem;
-            font-size: 1.8rem;
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            /* Título principal */
+            text-align: center;                  /* Centralizado */
+            color: #333;                        /* Cor escura */
+            margin-bottom: 2rem;                /* Margem inferior */
+            font-size: 1.8rem;                 /* Tamanho da fonte */
+            background: linear-gradient(45deg, #667eea, #764ba2); /* Gradiente no texto */
+            -webkit-background-clip: text;       /* Webkit: aplica gradiente só no texto */
+            -webkit-text-fill-color: transparent; /* Webkit: torna texto transparente */
+            background-clip: text;               /* Padrão: aplica gradiente só no texto */
         }
 
         .input-group {
-            position: relative;
-            margin-bottom: 1.5rem;
+            /* Container do campo de senha */
+            position: relative;                  /* Posicionamento relativo para botão interno */
+            margin-bottom: 1.5rem;              /* Margem inferior */
         }
 
         .password-input {
-            width: 100%;
-            padding: 15px 50px 15px 15px;
-            border: 2px solid #e1e5e9;
-            border-radius: 12px;
-            font-size: 16px;
-            transition: all 0.3s ease;
-            background: #f8f9fa;
+            /* Campo de entrada da senha */
+            width: 100%;                        /* Largura total */
+            padding: 15px 50px 15px 15px;       /* Padding: cima direita baixo esquerda */
+            border: 2px solid #e1e5e9;          /* Borda cinza clara */
+            border-radius: 12px;                /* Bordas arredondadas */
+            font-size: 16px;                   /* Tamanho da fonte */
+            transition: all 0.3s ease;          /* Transição suave para mudanças */
+            background: #f8f9fa;                /* Fundo cinza muito claro */
         }
 
         .password-input:focus {
-            outline: none;
-            border-color: #667eea;
-            background: white;
-            transform: translateY(-1px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+            /* Estilos quando campo está em foco */
+            outline: none;                      /* Remove outline padrão */
+            border-color: #667eea;              /* Muda cor da borda */
+            background: white;                  /* Fundo branco */
+            transform: translateY(-1px);        /* Move levemente para cima */
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2); /* Sombra colorida */
         }
 
         .toggle-password {
-            position: absolute;
-            right: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: none;
-            border: none;
-            cursor: pointer;
-            color: #666;
-            font-size: 18px;
-            padding: 5px;
+            /* Botão para mostrar/ocultar senha */
+            position: absolute;                 /* Posicionamento absoluto */
+            right: 15px;                       /* 15px da borda direita */
+            top: 50%;                         /* 50% do topo */
+            transform: translateY(-50%);       /* Centraliza verticalmente */
+            background: none;                  /* Sem fundo */
+            border: none;                     /* Sem borda */
+            cursor: pointer;                  /* Cursor de clique */
+            color: #666;                      /* Cor cinza */
+            font-size: 18px;                 /* Tamanho da fonte */
+            padding: 5px;                     /* Padding pequeno */
         }
 
         .toggle-password:hover {
-            color: #667eea;
+            /* Efeito hover no botão */
+            color: #667eea;                    /* Muda para cor azul */
         }
 
         .strength-meter {
-            height: 8px;
-            background: #e1e5e9;
-            border-radius: 4px;
-            margin: 15px 0;
-            overflow: hidden;
-            position: relative;
+            /* Barra de força da senha */
+            height: 8px;                      /* Altura fixa */
+            background: #e1e5e9;              /* Fundo cinza */
+            border-radius: 4px;               /* Bordas arredondadas */
+            margin: 15px 0;                   /* Margens vertical */
+            overflow: hidden;                 /* Esconde conteúdo que passar dos limites */
+            position: relative;               /* Para posicionamento dos filhos */
         }
 
         .strength-fill {
-            height: 100%;
-            width: 0%;
-            transition: all 0.5s ease;
-            border-radius: 4px;
-            position: relative;
+            /* Preenchimento da barra de força */
+            height: 100%;                     /* Altura total do pai */
+            width: 0%;                       /* Largura inicial zero */
+            transition: all 0.5s ease;       /* Transição suave */
+            border-radius: 4px;              /* Bordas arredondadas */
+            position: relative;              /* Posicionamento relativo */
         }
 
+        /* Classes para diferentes níveis de força */
         .strength-fill.muito-fraca {
-            background: linear-gradient(90deg, #ff4757, #ff6b7d);
-            width: 20%;
+            background: linear-gradient(90deg, #ff4757, #ff6b7d); /* Gradiente vermelho */
+            width: 20%;                      /* 20% da barra */
         }
 
         .strength-fill.fraca {
-            background: linear-gradient(90deg, #ffa726, #ffcc02);
-            width: 40%;
+            background: linear-gradient(90deg, #ffa726, #ffcc02); /* Gradiente laranja */
+            width: 40%;                      /* 40% da barra */
         }
 
         .strength-fill.media {
-            background: linear-gradient(90deg, #29b6f6, #42a5f5);
-            width: 60%;
+            background: linear-gradient(90deg, #29b6f6, #42a5f5); /* Gradiente azul */
+            width: 60%;                      /* 60% da barra */
         }
 
         .strength-fill.forte {
-            background: linear-gradient(90deg, #66bb6a, #4caf50);
-            width: 80%;
+            background: linear-gradient(90deg, #66bb6a, #4caf50); /* Gradiente verde claro */
+            width: 80%;                      /* 80% da barra */
         }
 
         .strength-fill.muito-forte {
-            background: linear-gradient(90deg, #2e7d32, #388e3c);
-            width: 100%;
+            background: linear-gradient(90deg, #2e7d32, #388e3c); /* Gradiente verde escuro */
+            width: 100%;                     /* 100% da barra */
         }
 
         .strength-text {
-            text-align: center;
-            margin: 10px 0;
-            font-weight: 600;
-            font-size: 14px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            /* Texto indicador da força */
+            text-align: center;              /* Centralizado */
+            margin: 10px 0;                 /* Margens verticais */
+            font-weight: 600;               /* Negrito */
+            font-size: 14px;                /* Tamanho da fonte */
+            text-transform: uppercase;       /* Texto em maiúsculas */
+            letter-spacing: 1px;            /* Espaçamento entre letras */
         }
 
         .criteria-list {
-            background: #f8f9fa;
-            border-radius: 12px;
-            padding: 20px;
-            margin-top: 20px;
+            /* Container da lista de critérios */
+            background: #f8f9fa;            /* Fundo cinza claro */
+            border-radius: 12px;            /* Bordas arredondadas */
+            padding: 20px;                  /* Padding interno */
+            margin-top: 20px;               /* Margem superior */
         }
 
         .criteria-item {
-            display: flex;
-            align-items: center;
-            padding: 8px 0;
-            font-size: 14px;
-            transition: all 0.3s ease;
+            /* Cada item da lista de critérios */
+            display: flex;                  /* Layout flexível */
+            align-items: center;            /* Alinha itens ao centro */
+            padding: 8px 0;                /* Padding vertical */
+            font-size: 14px;               /* Tamanho da fonte */
+            transition: all 0.3s ease;     /* Transição suave */
         }
 
         .criteria-icon {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            margin-right: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            font-weight: bold;
-            transition: all 0.3s ease;
+            /* Ícone de cada critério */
+            width: 20px;                   /* Largura fixa */
+            height: 20px;                  /* Altura fixa */
+            border-radius: 50%;            /* Formato circular */
+            margin-right: 12px;            /* Margem à direita */
+            display: flex;                 /* Layout flexível */
+            align-items: center;           /* Centraliza verticalmente */
+            justify-content: center;       /* Centraliza horizontalmente */
+            font-size: 12px;              /* Fonte pequena */
+            font-weight: bold;             /* Negrito */
+            transition: all 0.3s ease;    /* Transição suave */
         }
 
         .criteria-icon.valid {
-            background: linear-gradient(45deg, #4caf50, #66bb6a);
-            color: white;
+            /* Ícone quando critério é válido */
+            background: linear-gradient(45deg, #4caf50, #66bb6a); /* Gradiente verde */
+            color: white;                  /* Texto branco */
         }
 
         .criteria-icon.invalid {
-            background: #e0e0e0;
-            color: #666;
+            /* Ícone quando critério é inválido */
+            background: #e0e0e0;           /* Fundo cinza */
+            color: #666;                   /* Texto cinza */
         }
 
         .criteria-text {
-            color: #333;
+            /* Texto de cada critério */
+            color: #333;                   /* Cor escura */
         }
 
         .criteria-item.valid .criteria-text {
-            color: #2e7d32;
+            /* Texto quando critério é válido */
+            color: #2e7d32;                /* Verde escuro */
         }
 
         .score-display {
-            text-align: center;
-            margin: 20px 0;
-            padding: 15px;
-            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-            border-radius: 12px;
-            border: 2px solid #dee2e6;
+            /* Container da pontuação */
+            text-align: center;            /* Centralizado */
+            margin: 20px 0;               /* Margens verticais */
+            padding: 15px;                /* Padding interno */
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef); /* Gradiente suave */
+            border-radius: 12px;          /* Bordas arredondadas */
+            border: 2px solid #dee2e6;    /* Borda cinza */
         }
 
         .score-number {
-            font-size: 2rem;
-            font-weight: bold;
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            /* Número da pontuação */
+            font-size: 2rem;              /* Fonte grande */
+            font-weight: bold;            /* Negrito */
+            background: linear-gradient(45deg, #667eea, #764ba2); /* Gradiente no texto */
+            -webkit-background-clip: text; /* Webkit: aplica gradiente só no texto */
+            -webkit-text-fill-color: transparent; /* Webkit: torna texto transparente */
+            background-clip: text;         /* Padrão: aplica gradiente só no texto */
         }
 
         .score-label {
-            font-size: 0.9rem;
-            color: #666;
-            margin-top: 5px;
+            /* Rótulo da pontuação */
+            font-size: 0.9rem;            /* Fonte menor */
+            color: #666;                  /* Cor cinza */
+            margin-top: 5px;              /* Margem superior */
         }
 
         .recommendations {
-            background: #fff3e0;
-            border-left: 4px solid #ff9800;
-            padding: 15px;
-            margin-top: 20px;
-            border-radius: 0 8px 8px 0;
+            /* Container das recomendações */
+            background: #fff3e0;          /* Fundo laranja claro */
+            border-left: 4px solid #ff9800; /* Borda esquerda laranja */
+            padding: 15px;               /* Padding interno */
+            margin-top: 20px;            /* Margem superior */
+            border-radius: 0 8px 8px 0;  /* Bordas arredondadas à direita */
         }
 
         .recommendations h3 {
-            color: #e65100;
-            margin-bottom: 10px;
-            font-size: 1rem;
+            /* Título das recomendações */
+            color: #e65100;              /* Laranja escuro */
+            margin-bottom: 10px;         /* Margem inferior */
+            font-size: 1rem;            /* Tamanho da fonte */
         }
 
         .recommendations ul {
-            list-style: none;
+            /* Lista de recomendações */
+            list-style: none;            /* Remove marcadores padrão */
         }
 
         .recommendations li {
-            margin: 5px 0;
-            color: #bf360c;
-            font-size: 0.9rem;
+            /* Itens das recomendações */
+            margin: 5px 0;              /* Margens verticais */
+            color: #bf360c;             /* Vermelho escuro */
+            font-size: 0.9rem;          /* Fonte menor */
         }
 
         .recommendations li:before {
-            content: "⚠️ ";
-            margin-right: 8px;
+            /* Ícone antes de cada recomendação */
+            content: "⚠️ ";              /* Emoji de aviso */
+            margin-right: 8px;          /* Margem à direita */
         }
 
+        /* Animações CSS */
         @keyframes pulse {
+            /* Animação de pulsação */
             0% { transform: scale(1); }
             50% { transform: scale(1.05); }
             100% { transform: scale(1); }
         }
 
         .strength-fill {
+            /* Aplica animação de pulsação na barra */
             animation: pulse 2s infinite ease-in-out;
         }
 
         .criteria-item.valid {
+            /* Animação para critérios válidos */
             animation: fadeIn 0.5s ease-in;
         }
 
         @keyframes fadeIn {
+            /* Animação de aparecimento */
             from { opacity: 0; transform: translateX(-10px); }
             to { opacity: 1; transform: translateX(0); }
         }
     </style>
 </head>
 <body>
+    <!-- Corpo da página - conteúdo visível -->
     <div class="container">
+        <!-- Container principal -->
+        
         <h1>🔒 Verificador de Senhas Financeiras</h1>
+        <!-- Título principal com emoji -->
         
         <div class="input-group">
-            <input type="password" id="passwordInput" class="password-input" placeholder="Digite sua senha..." autocomplete="new-password">
+            <!-- Grupo do campo de entrada -->
+            <input type="password" id="passwordInput" class="password-input" 
+                   placeholder="Digite sua senha..." autocomplete="new-password">
+            <!-- 
+            Campo de senha:
+            - type="password": oculta o texto digitado
+            - id="passwordInput": identificador para JavaScript
+            - placeholder: texto de exemplo
+            - autocomplete="new-password": evita sugestões do navegador
+            -->
+            
             <button type="button" class="toggle-password" id="togglePassword">👁️</button>
+            <!-- Botão para mostrar/ocultar senha -->
         </div>
 
         <div class="strength-meter">
+            <!-- Barra medidora de força -->
             <div class="strength-fill" id="strengthFill"></div>
+            <!-- Preenchimento da barra (controlado via JavaScript) -->
         </div>
 
         <div class="strength-text" id="strengthText">Digite uma senha para verificar</div>
+        <!-- Texto indicador do nível de força -->
 
         <div class="score-display">
+            <!-- Display da pontuação -->
             <div class="score-number" id="scoreNumber">0</div>
+            <!-- Número da pontuação -->
             <div class="score-label">Pontuação de Segurança</div>
+            <!-- Rótulo explicativo -->
         </div>
 
         <div class="criteria-list">
+            <!-- Lista de critérios de validação -->
+            
             <div class="criteria-item" id="lengthCriteria">
                 <div class="criteria-icon invalid">✓</div>
                 <div class="criteria-text">Mínimo de 12 caracteres</div>
             </div>
+            <!-- Critério: comprimento mínimo -->
+            
             <div class="criteria-item" id="uppercaseCriteria">
                 <div class="criteria-icon invalid">✓</div>
                 <div class="criteria-text">Pelo menos 1 letra maiúscula</div>
             </div>
+            <!-- Critério: letras maiúsculas -->
+            
             <div class="criteria-item" id="lowercaseCriteria">
                 <div class="criteria-icon invalid">✓</div>
                 <div class="criteria-text">Pelo menos 1 letra minúscula</div>
             </div>
+            <!-- Critério: letras minúsculas -->
+            
             <div class="criteria-item" id="numberCriteria">
                 <div class="criteria-icon invalid">✓</div>
                 <div class="criteria-text">Pelo menos 2 números</div>
             </div>
+            <!-- Critério: números -->
+            
             <div class="criteria-item" id="specialCriteria">
                 <div class="criteria-icon invalid">✓</div>
                 <div class="criteria-text">Pelo menos 2 caracteres especiais (!@#$%^&*)</div>
             </div>
+            <!-- Critério: caracteres especiais -->
+            
             <div class="criteria-item" id="sequenceCriteria">
                 <div class="criteria-icon invalid">✓</div>
                 <div class="criteria-text">Sem sequências óbvias (123, abc)</div>
             </div>
+            <!-- Critério: sem sequências -->
+            
             <div class="criteria-item" id="repetitionCriteria">
                 <div class="criteria-icon invalid">✓</div>
                 <div class="criteria-text">Sem repetições excessivas</div>
             </div>
+            <!-- Critério: sem repetições -->
         </div>
 
         <div class="recommendations" id="recommendations" style="display: none;">
+            <!-- Container de recomendações (inicialmente oculto) -->
             <h3>Recomendações para melhorar:</h3>
             <ul id="recommendationsList"></ul>
+            <!-- Lista que será preenchida dinamicamente -->
         </div>
     </div>
 
     <script>
+        /* JavaScript - lógica de programação */
+        
+        // Captura elementos DOM - armazena referências para uso posterior
         const passwordInput = document.getElementById('passwordInput');
         const togglePassword = document.getElementById('togglePassword');
         const strengthFill = document.getElementById('strengthFill');
@@ -319,7 +405,7 @@
         const recommendations = document.getElementById('recommendations');
         const recommendationsList = document.getElementById('recommendationsList');
 
-        // Critérios DOM elements
+        // Object com referências aos elementos de critérios
         const criteria = {
             length: document.getElementById('lengthCriteria'),
             uppercase: document.getElementById('uppercaseCriteria'),
@@ -330,61 +416,88 @@
             repetition: document.getElementById('repetitionCriteria')
         };
 
-        // Toggle password visibility
+        // Event listener para botão de mostrar/ocultar senha
         togglePassword.addEventListener('click', function() {
+            // Alterna entre 'password' e 'text'
             const type = passwordInput.type === 'password' ? 'text' : 'password';
             passwordInput.type = type;
+            // Muda o emoji do botão baseado no estado
             this.textContent = type === 'password' ? '👁️' : '🙈';
         });
 
-        // Password validation functions
+        // Funções de validação de senha - cada uma testa um critério específico
+
         function hasMinLength(password) {
+            // Verifica se senha tem pelo menos 12 caracteres
             return password.length >= 12;
         }
 
         function hasUppercase(password) {
+            // Usa regex para verificar se há letras maiúsculas
             return /[A-Z]/.test(password);
+            // /[A-Z]/ = qualquer letra de A até Z
+            // .test() = retorna true se encontrar correspondência
         }
 
         function hasLowercase(password) {
+            // Verifica se há letras minúsculas
             return /[a-z]/.test(password);
         }
 
         function hasNumbers(password) {
+            // Encontra todos os dígitos na senha
             const numbers = password.match(/\d/g);
+            // /\d/g = qualquer dígito, flag 'g' para busca global
+            // match() retorna array com correspondências ou null
             return numbers && numbers.length >= 2;
+            // Verifica se existe array E se tem pelo menos 2 elementos
         }
 
         function hasSpecialChars(password) {
+            // Encontra caracteres especiais
             const special = password.match(/[!@#$%^&*(),.?":{}|<>]/g);
+            // Lista específica de caracteres especiais permitidos
             return special && special.length >= 2;
         }
 
         function hasNoObviousSequences(password) {
+            // Array com sequências proibidas
             const sequences = ['123', '234', '345', '456', '567', '678', '789', '890',
                              'abc', 'bcd', 'cde', 'def', 'efg', 'fgh', 'ghi', 'hij',
                              'qwe', 'wer', 'ert', 'rty', 'tyu', 'yui', 'uio', 'iop',
                              'asd', 'sdf', 'dfg', 'fgh', 'ghj', 'hjk', 'jkl',
                              'zxc', 'xcv', 'cvb', 'vbn', 'bnm'];
             
+            // Converte senha para minúsculas para comparação
             const lowerPassword = password.toLowerCase();
+            // Verifica se NENHUMA sequência está presente
             return !sequences.some(seq => lowerPassword.includes(seq));
+            // some() retorna true se pelo menos um elemento satisfaz a condição
+            // includes() verifica se string contém substring
+            // ! nega o resultado (queremos que NÃO contenha sequências)
         }
 
         function hasNoExcessiveRepetition(password) {
-            // Verifica se não há mais de 2 caracteres iguais consecutivos
+            // Regex para detectar 3+ caracteres iguais consecutivos
             return !/(.)\1{2,}/.test(password);
+            // (.) = captura qualquer caractere
+            // \1 = referência ao primeiro grupo capturado
+            // {2,} = repetido 2 ou mais vezes (total = 3+)
+            // ! nega o resultado
         }
 
         function updateCriteriaDisplay(criteriaName, isValid) {
-            const item = criteria[criteriaName];
-            const icon = item.querySelector('.criteria-icon');
+            // Atualiza visual dos critérios na interface
+            const item = criteria[criteriaName];        // Busca elemento do critério
+            const icon = item.querySelector('.criteria-icon'); // Busca ícone dentro do item
             
             if (isValid) {
+                // Se critério é válido: adiciona classes de sucesso
                 item.classList.add('valid');
                 icon.classList.remove('invalid');
                 icon.classList.add('valid');
             } else {
+                // Se inválido: remove classes de sucesso
                 item.classList.remove('valid');
                 icon.classList.remove('valid');
                 icon.classList.add('invalid');
@@ -392,11 +505,12 @@
         }
 
         function calculateStrength(password) {
-            let score = 0;
-            let validCriteria = 0;
-            const recommendations = [];
+            // Função principal que calcula força da senha
+            let score = 0;                    // Pontuação inicial
+            let validCriteria = 0;            // Contador de critérios válidos
+            const recommendations = [];        // Array de recomendações
 
-            // Verificar cada critério
+            // Object com resultados de cada verificação
             const checks = {
                 length: hasMinLength(password),
                 uppercase: hasUppercase(password),
@@ -407,32 +521,37 @@
                 repetition: hasNoExcessiveRepetition(password)
             };
 
-            // Atualizar display dos critérios
+            // Atualizar display dos critérios e contar válidos
             Object.keys(checks).forEach(key => {
                 updateCriteriaDisplay(key, checks[key]);
                 if (checks[key]) {
-                    validCriteria++;
+                    validCriteria++;  // Incrementa contador
                 }
             });
 
-            // Calcular pontuação baseada nos critérios
+            // Calcular pontuação base - 10 pontos por critério
             score = validCriteria * 10;
 
             // Bônus por comprimento extra
-            if (password.length >= 16) score += 10;
-            if (password.length >= 20) score += 10;
+            if (password.length >= 16) score += 10;  // +10 para 16+ chars
+            if (password.length >= 20) score += 10;  // +10 para 20+ chars
 
             // Bônus por diversidade de caracteres
-            const uniqueChars = new Set(password).size;
+            const uniqueChars = new Set(password).size; // Set remove duplicatas
             if (uniqueChars >= password.length * 0.7) score += 10;
+            // Bônus se 70%+ dos caracteres forem únicos
 
             // Penalidades
-            if (password.length < 8) score -= 20;
+            if (password.length < 8) score -= 20;   // Penalidade severa para <8 chars
             if (!/[A-Z]/.test(password) || !/[a-z]/.test(password)) score -= 10;
+            // Penalidade se não tem maiúsculas OU minúsculas
 
+            // Garante que score fica entre 0 e 100
             score = Math.max(0, Math.min(100, score));
+            // Math.max(0, x) garante mínimo 0
+            // Math.min(100, x) garante máximo 100
 
-            // Gerar recomendações
+            // Gerar recomendações baseadas nos critérios falhados
             if (!checks.length) recommendations.push('Usar pelo menos 12 caracteres');
             if (!checks.uppercase) recommendations.push('Adicionar letras maiúsculas');
             if (!checks.lowercase) recommendations.push('Adicionar letras minúsculas');
@@ -441,28 +560,34 @@
             if (!checks.sequence) recommendations.push('Evitar sequências óbvias como 123 ou abc');
             if (!checks.repetition) recommendations.push('Evitar repetições excessivas de caracteres');
 
+            // Retorna object com resultados
             return { score, recommendations, validCriteria };
         }
 
         function updateStrengthDisplay(password) {
+            // Atualiza toda a interface baseada na senha atual
+            
             if (!password) {
+                // Se senha está vazia: reset da interface
                 strengthFill.className = 'strength-fill';
                 strengthText.textContent = 'Digite uma senha para verificar';
                 scoreNumber.textContent = '0';
                 recommendations.style.display = 'none';
+                // Reset todos os critérios para inválido
                 Object.keys(criteria).forEach(key => {
                     updateCriteriaDisplay(key, false);
                 });
                 return;
             }
 
+            // Calcula força da senha
             const result = calculateStrength(password);
-            const { score, recommendations: recs } = result;
+            const { score, recommendations: recs } = result; // Destructuring
 
-            // Atualizar pontuação
+            // Atualizar pontuação na tela
             scoreNumber.textContent = score;
 
-            // Determinar nível de força
+            // Determinar nível de força baseado na pontuação
             let strengthClass, strengthLabel;
             if (score < 20) {
                 strengthClass = 'muito-fraca';
@@ -481,24 +606,30 @@
                 strengthLabel = 'Muito Forte';
             }
 
+            // Aplicar classe CSS e texto correspondente
             strengthFill.className = `strength-fill ${strengthClass}`;
             strengthText.textContent = strengthLabel;
 
-            // Mostrar recomendações se necessário
+            // Mostrar recomendações apenas se necessário
             if (recs.length > 0 && score < 80) {
+                // Converte array de recomendações em HTML
                 recommendationsList.innerHTML = recs.map(rec => `<li>${rec}</li>`).join('');
-                recommendations.style.display = 'block';
+                // map() transforma cada item em <li>
+                // join('') une todos os elementos em uma string
+                recommendations.style.display = 'block'; // Mostra container
             } else {
-                recommendations.style.display = 'none';
+                recommendations.style.display = 'none';  // Oculta container
             }
         }
 
-        // Event listener para input em tempo real
+        // Event listener para verificação em tempo real
         passwordInput.addEventListener('input', function() {
+            // 'input' dispara a cada mudança no campo
             updateStrengthDisplay(this.value);
+            // this.value = valor atual do campo
         });
 
-        // Inicializar
+        // Inicialização - chama função com string vazia
         updateStrengthDisplay('');
     </script>
 </body>

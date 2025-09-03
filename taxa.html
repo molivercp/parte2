@@ -1,87 +1,149 @@
 <!DOCTYPE html>
+<!-- Declaração do tipo de documento HTML5 -->
 <html lang="pt-BR">
+<!-- Elemento raiz HTML com idioma definido como português brasileiro -->
+
 <head>
+    <!-- Seção de metadados do documento -->
     <meta charset="UTF-8">
+    <!-- Define codificação de caracteres como UTF-8 para suportar acentos -->
+    
     <title>Calculadora de Juros Compostos</title>
+    <!-- Título que aparece na aba do navegador -->
+    
     <style>
+        /* CSS interno - estilos para formatação da página */
+        
         body {
-            font-family: Arial, sans-serif;
-            max-width: 500px;
-            margin: 50px auto;
-            padding: 20px;
-            background-color: #f9f9f9;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            /* Estilos para o corpo da página */
+            font-family: Arial, sans-serif;     /* Define fonte padrão */
+            max-width: 500px;                   /* Largura máxima de 500px */
+            margin: 50px auto;                  /* Margem de 50px em cima/baixo e centraliza horizontalmente */
+            padding: 20px;                      /* Espaçamento interno de 20px */
+            background-color: #f9f9f9;         /* Cor de fundo cinza claro */
+            border-radius: 8px;                /* Bordas arredondadas */
+            box-shadow: 0 0 10px rgba(0,0,0,0.1); /* Sombra sutil ao redor */
         }
 
         label {
-            display: block;
-            margin: 10px 0 5px;
+            /* Estilos para os rótulos dos campos */
+            display: block;                     /* Faz o label ocupar linha inteira */
+            margin: 10px 0 5px;                /* Margens: 10px acima, 5px abaixo */
         }
 
         input[type="number"] {
-            width: 100%;
-            padding: 8px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
+            /* Estilos específicos para campos de entrada numéricos */
+            width: 100%;                       /* Largura total disponível */
+            padding: 8px;                      /* Espaçamento interno */
+            margin-bottom: 15px;               /* Margem inferior */
+            border: 1px solid #ccc;            /* Borda cinza */
+            border-radius: 4px;                /* Bordas levemente arredondadas */
         }
 
         button {
-            background-color: #28a745;
-            color: white;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
+            /* Estilos para o botão */
+            background-color: #28a745;          /* Cor de fundo verde */
+            color: white;                       /* Texto branco */
+            padding: 10px 15px;                /* Espaçamento interno */
+            border: none;                       /* Remove borda padrão */
+            border-radius: 4px;                /* Bordas arredondadas */
+            cursor: pointer;                    /* Muda cursor para indicar clicável */
         }
 
         button:hover {
-            background-color: #218838;
+            /* Efeito quando mouse passa sobre o botão */
+            background-color: #218838;          /* Verde mais escuro */
         }
 
         #resultado {
-            margin-top: 20px;
-            font-size: 1.2em;
-            font-weight: bold;
+            /* Estilos para área de resultado */
+            margin-top: 20px;                   /* Margem superior */
+            font-size: 1.2em;                  /* Fonte 20% maior que normal */
+            font-weight: bold;                  /* Texto em negrito */
         }
     </style>
 </head>
+
 <body>
+    <!-- Corpo da página - conteúdo visível -->
 
     <h2>Calculadora de Juros Compostos</h2>
+    <!-- Título principal da calculadora -->
 
+    <!-- Campo para inserir o capital inicial -->
     <label for="capital">Capital Inicial (R$):</label>
+    <!-- Rótulo explicativo vinculado ao campo "capital" -->
     <input type="number" id="capital" placeholder="Ex: 1000" step="0.01">
+    <!-- 
+    - type="number": aceita apenas números
+    - id="capital": identificador único para JavaScript
+    - placeholder: texto de exemplo
+    - step="0.01": permite valores decimais com 2 casas
+    -->
 
+    <!-- Campo para inserir a taxa de juros -->
     <label for="taxa">Taxa de Juros (%):</label>
     <input type="number" id="taxa" placeholder="Ex: 10" step="0.01">
 
+    <!-- Campo para inserir número de períodos -->
     <label for="periodos">Períodos (meses ou anos):</label>
     <input type="number" id="periodos" placeholder="Ex: 5">
+    <!-- Note que períodos não tem step, então aceita apenas números inteiros -->
 
+    <!-- Botão que executa o cálculo -->
     <button onclick="calcular()">Calcular</button>
+    <!-- onclick="calcular()": chama função JavaScript quando clicado -->
 
+    <!-- Div onde será exibido o resultado -->
     <div id="resultado"></div>
+    <!-- id="resultado": identificador para JavaScript inserir o resultado -->
 
     <script>
+        /* JavaScript - lógica de programação */
+        
+        // Função que implementa a fórmula matemática dos juros compostos
         function calcularJurosCompostos(capital, taxa, periodos) {
+            /* 
+            Fórmula: M = C × (1 + i)^n
+            Onde:
+            - M = Montante final
+            - C = Capital inicial
+            - i = Taxa de juros (em decimal)
+            - n = Número de períodos
+            */
             return capital * Math.pow((1 + taxa), periodos);
+            // Math.pow() calcula potenciação: (1 + taxa) elevado a 'periodos'
         }
 
+        // Função principal que é executada quando botão é clicado
         function calcular() {
+            // Captura valores dos campos HTML e converte para números
             let capital = parseFloat(document.getElementById('capital').value);
+            // parseFloat(): converte string em número decimal
+            // document.getElementById(): busca elemento pelo ID
+            // .value: obtém o valor digitado no campo
+            
             let taxa = parseFloat(document.getElementById('taxa').value) / 100;
+            // Divide por 100 para converter porcentagem em decimal (10% = 0.10)
+            
             let periodos = parseInt(document.getElementById('periodos').value);
+            // parseInt(): converte string em número inteiro
 
+            // Validação: verifica se todos os campos foram preenchidos corretamente
             if (isNaN(capital) || isNaN(taxa) || isNaN(periodos)) {
+                // isNaN(): verifica se valor "is Not a Number"
                 document.getElementById('resultado').innerText = "Preencha todos os campos corretamente.";
-                return;
+                return; // Para execução da função se houver erro
             }
 
+            // Se validação passou, executa o cálculo
             let resultado = calcularJurosCompostos(capital, taxa, periodos);
+            
+            // Exibe resultado formatado na tela
             document.getElementById('resultado').innerText =
                 `Valor final: R$ ${resultado.toFixed(2)}`;
+            // toFixed(2): limita a 2 casas decimais
+            // Template literal (`${}`) para inserir variável na string
         }
     </script>
 
