@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Validador de Carteiras e Transações</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #f4f4f4;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        input, button {
+            padding: 8px;
+            font-size: 1em;
+            margin: 5px 0;
+            width: 100%;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #resultado {
+            margin-top: 20px;
+        }
+
+        .transacao {
+            background-color: white;
+            margin: 5px 0;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Validador de Endereço de Carteira</h2>
+
+    <input type="text" id="enderecoInput" placeholder="Digite o endereço da carteira">
+    <button onclick="validarEndereco()">Validar Endereço</button>
+
+    <div id="resultadoValidacao"></div>
+
+    <h2>Transações</h2>
+
+    <button onclick="ordenarTransacoes()">Ordenar por Valor (Maior → Menor)</button>
+
+    <div id="listaTransacoes"></div>
+
+    <script>
+        // Função para validar um endereço de carteira Ethereum
+        function validarEnderecoCarteira(endereco) {
+            return endereco.startsWith("0x") && endereco.length === 42;
+        }
+
+        function validarEndereco() {
+            const input = document.getElementById('enderecoInput').value.trim();
+            const resultado = document.getElementById('resultadoValidacao');
+
+            if (validarEnderecoCarteira(input)) {
+                resultado.textContent = "✅ Endereço válido!";
+                resultado.style.color = "green";
+            } else {
+                resultado.textContent = "❌ Endereço inválido. Deve começar com '0x' e ter 42 caracteres.";
+                resultado.style.color = "red";
+            }
+        }
+
+        // Lista de transações
+        let transacoes = [
+            { endereco: "0xabc123...", valor: 250 },
+            { endereco: "0x123abc...", valor: 100 },
+            { endereco: "0x456def...", valor: 500 }
+        ];
+
+        function exibirTransacoes() {
+            const lista = document.getElementById('listaTransacoes');
+            lista.innerHTML = '';
+
+            transacoes.forEach(tx => {
+                const div = document.createElement('div');
+                div.className = 'transacao';
+                div.innerText = `Endereço: ${tx.endereco} | Valor: ${tx.valor}`;
+                lista.appendChild(div);
+            });
+        }
+
+        function ordenarTransacoes() {
+            transacoes.sort((a, b) => b.valor - a.valor);
+            exibirTransacoes();
+        }
+
+        // Exibe transações ao carregar a página
+        exibirTransacoes();
+    </script>
+
+</body>
+</html>

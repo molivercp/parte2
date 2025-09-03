@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verificador de Força de Senhas Financeiras</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            width: 100%;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 2rem;
+            font-size: 1.8rem;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .password-input {
+            width: 100%;
+            padding: 15px 50px 15px 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        .password-input:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            transform: translateY(-1px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #666;
+            font-size: 18px;
+            padding: 5px;
+        }
+
+        .toggle-password:hover {
+            color: #667eea;
+        }
+
+        .strength-meter {
+            height: 8px;
+            background: #e1e5e9;
+            border-radius: 4px;
+            margin: 15px 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .strength-fill {
+            height: 100%;
+            width: 0%;
+            transition: all 0.5s ease;
+            border-radius: 4px;
+            position: relative;
+        }
+
+        .strength-fill.muito-fraca {
+            background: linear-gradient(90deg, #ff4757, #ff6b7d);
+            width: 20%;
+        }
+
+        .strength-fill.fraca {
+            background: linear-gradient(90deg, #ffa726, #ffcc02);
+            width: 40%;
+        }
+
+        .strength-fill.media {
+            background: linear-gradient(90deg, #29b6f6, #42a5f5);
+            width: 60%;
+        }
+
+        .strength-fill.forte {
+            background: linear-gradient(90deg, #66bb6a, #4caf50);
+            width: 80%;
+        }
+
+        .strength-fill.muito-forte {
+            background: linear-gradient(90deg, #2e7d32, #388e3c);
+            width: 100%;
+        }
+
+        .strength-text {
+            text-align: center;
+            margin: 10px 0;
+            font-weight: 600;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .criteria-list {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .criteria-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 0;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .criteria-icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-right: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .criteria-icon.valid {
+            background: linear-gradient(45deg, #4caf50, #66bb6a);
+            color: white;
+        }
+
+        .criteria-icon.invalid {
+            background: #e0e0e0;
+            color: #666;
+        }
+
+        .criteria-text {
+            color: #333;
+        }
+
+        .criteria-item.valid .criteria-text {
+            color: #2e7d32;
+        }
+
+        .score-display {
+            text-align: center;
+            margin: 20px 0;
+            padding: 15px;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 12px;
+            border: 2px solid #dee2e6;
+        }
+
+        .score-number {
+            font-size: 2rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .score-label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .recommendations {
+            background: #fff3e0;
+            border-left: 4px solid #ff9800;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .recommendations h3 {
+            color: #e65100;
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+
+        .recommendations ul {
+            list-style: none;
+        }
+
+        .recommendations li {
+            margin: 5px 0;
+            color: #bf360c;
+            font-size: 0.9rem;
+        }
+
+        .recommendations li:before {
+            content: "⚠️ ";
+            margin-right: 8px;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .strength-fill {
+            animation: pulse 2s infinite ease-in-out;
+        }
+
+        .criteria-item.valid {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateX(-10px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔒 Verificador de Senhas Financeiras</h1>
+        
+        <div class="input-group">
+            <input type="password" id="passwordInput" class="password-input" placeholder="Digite sua senha..." autocomplete="new-password">
+            <button type="button" class="toggle-password" id="togglePassword">👁️</button>
+        </div>
+
+        <div class="strength-meter">
+            <div class="strength-fill" id="strengthFill"></div>
+        </div>
+
+        <div class="strength-text" id="strengthText">Digite uma senha para verificar</div>
+
+        <div class="score-display">
+            <div class="score-number" id="scoreNumber">0</div>
+            <div class="score-label">Pontuação de Segurança</div>
+        </div>
+
+        <div class="criteria-list">
+            <div class="criteria-item" id="lengthCriteria">
+                <div class="criteria-icon invalid">✓</div>
+                <div class="criteria-text">Mínimo de 12 caracteres</div>
+            </div>
+            <div class="criteria-item" id="uppercaseCriteria">
+                <div class="criteria-icon invalid">✓</div>
+                <div class="criteria-text">Pelo menos 1 letra maiúscula</div>
+            </div>
+            <div class="criteria-item" id="lowercaseCriteria">
+                <div class="criteria-icon invalid">✓</div>
+                <div class="criteria-text">Pelo menos 1 letra minúscula</div>
+            </div>
+            <div class="criteria-item" id="numberCriteria">
+                <div class="criteria-icon invalid">✓</div>
+                <div class="criteria-text">Pelo menos 2 números</div>
+            </div>
+            <div class="criteria-item" id="specialCriteria">
+                <div class="criteria-icon invalid">✓</div>
+                <div class="criteria-text">Pelo menos 2 caracteres especiais (!@#$%^&*)</div>
+            </div>
+            <div class="criteria-item" id="sequenceCriteria">
+                <div class="criteria-icon invalid">✓</div>
+                <div class="criteria-text">Sem sequências óbvias (123, abc)</div>
+            </div>
+            <div class="criteria-item" id="repetitionCriteria">
+                <div class="criteria-icon invalid">✓</div>
+                <div class="criteria-text">Sem repetições excessivas</div>
+            </div>
+        </div>
+
+        <div class="recommendations" id="recommendations" style="display: none;">
+            <h3>Recomendações para melhorar:</h3>
+            <ul id="recommendationsList"></ul>
+        </div>
+    </div>
+
+    <script>
+        const passwordInput = document.getElementById('passwordInput');
+        const togglePassword = document.getElementById('togglePassword');
+        const strengthFill = document.getElementById('strengthFill');
+        const strengthText = document.getElementById('strengthText');
+        const scoreNumber = document.getElementById('scoreNumber');
+        const recommendations = document.getElementById('recommendations');
+        const recommendationsList = document.getElementById('recommendationsList');
+
+        // Critérios DOM elements
+        const criteria = {
+            length: document.getElementById('lengthCriteria'),
+            uppercase: document.getElementById('uppercaseCriteria'),
+            lowercase: document.getElementById('lowercaseCriteria'),
+            number: document.getElementById('numberCriteria'),
+            special: document.getElementById('specialCriteria'),
+            sequence: document.getElementById('sequenceCriteria'),
+            repetition: document.getElementById('repetitionCriteria')
+        };
+
+        // Toggle password visibility
+        togglePassword.addEventListener('click', function() {
+            const type = passwordInput.type === 'password' ? 'text' : 'password';
+            passwordInput.type = type;
+            this.textContent = type === 'password' ? '👁️' : '🙈';
+        });
+
+        // Password validation functions
+        function hasMinLength(password) {
+            return password.length >= 12;
+        }
+
+        function hasUppercase(password) {
+            return /[A-Z]/.test(password);
+        }
+
+        function hasLowercase(password) {
+            return /[a-z]/.test(password);
+        }
+
+        function hasNumbers(password) {
+            const numbers = password.match(/\d/g);
+            return numbers && numbers.length >= 2;
+        }
+
+        function hasSpecialChars(password) {
+            const special = password.match(/[!@#$%^&*(),.?":{}|<>]/g);
+            return special && special.length >= 2;
+        }
+
+        function hasNoObviousSequences(password) {
+            const sequences = ['123', '234', '345', '456', '567', '678', '789', '890',
+                             'abc', 'bcd', 'cde', 'def', 'efg', 'fgh', 'ghi', 'hij',
+                             'qwe', 'wer', 'ert', 'rty', 'tyu', 'yui', 'uio', 'iop',
+                             'asd', 'sdf', 'dfg', 'fgh', 'ghj', 'hjk', 'jkl',
+                             'zxc', 'xcv', 'cvb', 'vbn', 'bnm'];
+            
+            const lowerPassword = password.toLowerCase();
+            return !sequences.some(seq => lowerPassword.includes(seq));
+        }
+
+        function hasNoExcessiveRepetition(password) {
+            // Verifica se não há mais de 2 caracteres iguais consecutivos
+            return !/(.)\1{2,}/.test(password);
+        }
+
+        function updateCriteriaDisplay(criteriaName, isValid) {
+            const item = criteria[criteriaName];
+            const icon = item.querySelector('.criteria-icon');
+            
+            if (isValid) {
+                item.classList.add('valid');
+                icon.classList.remove('invalid');
+                icon.classList.add('valid');
+            } else {
+                item.classList.remove('valid');
+                icon.classList.remove('valid');
+                icon.classList.add('invalid');
+            }
+        }
+
+        function calculateStrength(password) {
+            let score = 0;
+            let validCriteria = 0;
+            const recommendations = [];
+
+            // Verificar cada critério
+            const checks = {
+                length: hasMinLength(password),
+                uppercase: hasUppercase(password),
+                lowercase: hasLowercase(password),
+                number: hasNumbers(password),
+                special: hasSpecialChars(password),
+                sequence: hasNoObviousSequences(password),
+                repetition: hasNoExcessiveRepetition(password)
+            };
+
+            // Atualizar display dos critérios
+            Object.keys(checks).forEach(key => {
+                updateCriteriaDisplay(key, checks[key]);
+                if (checks[key]) {
+                    validCriteria++;
+                }
+            });
+
+            // Calcular pontuação baseada nos critérios
+            score = validCriteria * 10;
+
+            // Bônus por comprimento extra
+            if (password.length >= 16) score += 10;
+            if (password.length >= 20) score += 10;
+
+            // Bônus por diversidade de caracteres
+            const uniqueChars = new Set(password).size;
+            if (uniqueChars >= password.length * 0.7) score += 10;
+
+            // Penalidades
+            if (password.length < 8) score -= 20;
+            if (!/[A-Z]/.test(password) || !/[a-z]/.test(password)) score -= 10;
+
+            score = Math.max(0, Math.min(100, score));
+
+            // Gerar recomendações
+            if (!checks.length) recommendations.push('Usar pelo menos 12 caracteres');
+            if (!checks.uppercase) recommendations.push('Adicionar letras maiúsculas');
+            if (!checks.lowercase) recommendations.push('Adicionar letras minúsculas');
+            if (!checks.number) recommendations.push('Adicionar pelo menos 2 números');
+            if (!checks.special) recommendations.push('Adicionar pelo menos 2 caracteres especiais');
+            if (!checks.sequence) recommendations.push('Evitar sequências óbvias como 123 ou abc');
+            if (!checks.repetition) recommendations.push('Evitar repetições excessivas de caracteres');
+
+            return { score, recommendations, validCriteria };
+        }
+
+        function updateStrengthDisplay(password) {
+            if (!password) {
+                strengthFill.className = 'strength-fill';
+                strengthText.textContent = 'Digite uma senha para verificar';
+                scoreNumber.textContent = '0';
+                recommendations.style.display = 'none';
+                Object.keys(criteria).forEach(key => {
+                    updateCriteriaDisplay(key, false);
+                });
+                return;
+            }
+
+            const result = calculateStrength(password);
+            const { score, recommendations: recs } = result;
+
+            // Atualizar pontuação
+            scoreNumber.textContent = score;
+
+            // Determinar nível de força
+            let strengthClass, strengthLabel;
+            if (score < 20) {
+                strengthClass = 'muito-fraca';
+                strengthLabel = 'Muito Fraca';
+            } else if (score < 40) {
+                strengthClass = 'fraca';
+                strengthLabel = 'Fraca';
+            } else if (score < 60) {
+                strengthClass = 'media';
+                strengthLabel = 'Média';
+            } else if (score < 80) {
+                strengthClass = 'forte';
+                strengthLabel = 'Forte';
+            } else {
+                strengthClass = 'muito-forte';
+                strengthLabel = 'Muito Forte';
+            }
+
+            strengthFill.className = `strength-fill ${strengthClass}`;
+            strengthText.textContent = strengthLabel;
+
+            // Mostrar recomendações se necessário
+            if (recs.length > 0 && score < 80) {
+                recommendationsList.innerHTML = recs.map(rec => `<li>${rec}</li>`).join('');
+                recommendations.style.display = 'block';
+            } else {
+                recommendations.style.display = 'none';
+            }
+        }
+
+        // Event listener para input em tempo real
+        passwordInput.addEventListener('input', function() {
+            updateStrengthDisplay(this.value);
+        });
+
+        // Inicializar
+        updateStrengthDisplay('');
+    </script>
+</body>
+</html>
